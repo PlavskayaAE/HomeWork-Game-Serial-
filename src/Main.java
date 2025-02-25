@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -15,13 +12,12 @@ public class Main {
         GameProgress play2 = new GameProgress(100, 2, 4, 800);
         GameProgress play3 = new GameProgress(95, 1, 9, 1599);
 
-        File savegames = new File("C://Users//Александра//Desktop//Games//savegames");
-        List<String> saveGamesList = new ArrayList<>();
-
         saveGame("C://Users//Александра//Desktop//Games//savegames//save1.dat", play1);
         saveGame("C://Users//Александра//Desktop//Games//savegames//save2.dat", play2);
         saveGame("C://Users//Александра//Desktop//Games//savegames//save3.dat", play3);
 
+        File savegames = new File("C://Users//Александра//Desktop//Games//savegames");
+        List<String> saveGamesList = new ArrayList<>();
         for (File file : savegames.listFiles()) {
             saveGamesList.add(file.getAbsolutePath());
         }
@@ -30,13 +26,12 @@ public class Main {
 
         for (File file : savegames.listFiles()) {
             if (file.getAbsolutePath().contains(".dat")) {
-                System.out.println(file.delete());
+               file.delete();
             }
         }
 
         openZip("C://Users//Александра//Desktop//Games//savegames//zip.zip", "C://Users//Александра//Desktop//Games//savegames");
-
-
+        openProgress("C://Users//Александра//Desktop//Games//savegames//save1.dat");
     }
 
 
@@ -90,5 +85,16 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void openProgress(String datPath) {
+        GameProgress gameProgress = null;
+        try (FileInputStream fis = new FileInputStream(datPath);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            gameProgress = (GameProgress) ois.readObject();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println(gameProgress);
     }
 }
