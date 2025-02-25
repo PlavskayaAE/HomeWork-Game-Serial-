@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class Main {
@@ -32,6 +33,9 @@ public class Main {
                 System.out.println(file.delete());
             }
         }
+
+        openZip("C://Users//Александра//Desktop//Games//savegames//zip.zip", "C://Users//Александра//Desktop//Games//savegames");
+
 
     }
 
@@ -64,9 +68,27 @@ public class Main {
             zout.closeEntry();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-
         }
-
     }
 
+    public static void openZip(String zipPath, String folderPath) {
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipPath))) {
+            ZipEntry entry;
+            String name;
+            while ((entry = zis.getNextEntry()) != null) {
+                name = entry.getName();
+                File file = new File(folderPath, name);
+                FileOutputStream fos = new FileOutputStream(file);
+
+                for (int c = zis.read(); c != -1; c = zis.read()) {
+                    fos.write(c);
+                }
+                fos.flush();
+                zis.closeEntry();
+                fos.close();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
