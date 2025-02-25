@@ -25,7 +25,14 @@ public class Main {
             saveGamesList.add(file.getAbsolutePath());
         }
 
-        zipFiles("C://Users//Александра//Desktop//Games//savegames//zip.zip", saveGamesList); // ИМЯ ПАПКИ
+        zipFiles("C://Users//Александра//Desktop//Games//savegames//zip.zip", saveGamesList);
+
+        for (File file : savegames.listFiles()) {
+            if (file.getAbsolutePath().contains(".dat")) {
+                System.out.println(file.delete());
+            }
+        }
+
     }
 
 
@@ -41,9 +48,9 @@ public class Main {
     public static void zipFiles(String zipPath, List<String> list) {
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(zipPath))) {
             for (int i = 0; i < list.size(); i++) {
-                try {
-                    FileInputStream fis = new FileInputStream(list.get(i));
-                    ZipEntry entry = new ZipEntry(list.get(i));
+                try (FileInputStream fis = new FileInputStream(list.get(i))) {
+                    String fileName = new File(list.get(i)).getName();
+                    ZipEntry entry = new ZipEntry(fileName);
                     zout.putNextEntry(entry);
                     byte[] buffer = new byte[fis.available()];
                     fis.read(buffer);
@@ -54,8 +61,12 @@ public class Main {
                     System.out.println(ex.getMessage());
                 }
             }
+            zout.closeEntry();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+
         }
+
     }
+
 }
